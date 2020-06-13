@@ -1,0 +1,289 @@
+dockers installation :
+1. sudo apt-get update
+2. sudo apt install docker.io
+3. sudo systemctl start docker
+4. sudo systemctl enable docker
+5. docker --version
+
+----------------------------------------
+list docker images
+
+docker image ls
+docker images 
+----------------------------------------
+show active container
+
+docker ps
+
+
+try(newgrp docker)
+try(sudo systemctl start docker)
+----------------------------------------
+list all docker containers
+
+docker ps -a
+----------------------------------------
+stop the container
+
+docker stop <cont name>
+----------------------------------------
+remove docker container
+
+docker rm aaaa
+----------------------------------------
+get into bash 
+
+docker exec -it ubuntu bash
+
+----------------------------------------
+Docker Postgres Alpine Commands:
+
+docker run --name pg117alpine -e POSTGRES_PASSWORD=root -v $HOME/docker/volumes/postgres:/var/lib/postgresql/data -p 5432:5432 -d postgres:11.7-alpine
+----------------------------------------
+
+
+run docker container
+
+docker container start pg117alpine
+
+pg117alpine- container name
+
+
+----------------------------------------
+docker running command tcp already running
+lsof -i :5432
+sudo ss -lptn 'sport = :5432'
+
+to stop it use:
+sudo service postgresql stop
+----------------------------------------
+get into the container:
+
+docker exec -it pg117alpine bash
+----------------------------------------
+
+connect to the database:
+
+1. psql -U postgres
+
+----------------------------------------
+show databases:
+
+\l
+----------------------------------------
+show size of the database:
+
+\l+
+----------------------------------------
+
+Show roles
+
+\du
+----------------------------------------
+switch database
+
+\c db_name
+----------------------------------------
+show schema table
+
+\dt+
+----------------------------------------
+Get current database:
+
+select current_database();
+----------------------------------------
+
+List tables in the database
+
+\dt
+----------------------------------------
+show table with size
+
+\dt+
+----------------------------------------
+show specific schema tables
+
+\dt schema_name.* 
+----------------------------------------
+specific table
+
+\d table_name
+
+
+Got permission denied while trying to connect to the Docker daemon socket:
+https://stackoverflow.com/questions/48957195/how-to-fix-docker-got-permission-denied-issue
+
+----------------------------------------
+POSTGRE SQL
+
+----------------------------------------
+
+CREATE A NEW TABLE :
+
+CREATE TABLE ONE (
+    NAME INT 
+);
+
+INSERTING INTO THE TABLE:
+
+INSERT INTO ONE (NAME) VALUES (1);
+INSERT INTO ONE (NAME) VALUES (2);sudo
+
+SELECTING FROM THE TABLE:
+
+SELECT * FROM ONE;
+
+
+
+TO  GO TO THE DATABASE FOLLOW THE COMMANDS
+
+1. CHECK FOR DOCKER RUNNING IF NOT RUN THE DOCKER
+2  docker container start pg117alpine
+3. docker exec -it pg117alpine bash
+4. psql -U postgres
+5. START WORKING WITH THE TABLE (OR CREATE A NEW ONE)
+
+ ---------------------------------POSTGRESQL TUTORIAL-----------------------------------
+
+1. CREATE A DATABASE
+
+Create database team_dynamics;
+
+2. Connect to the database
+
+\c team_dynamics;
+
+3. creating a table :
+
+CREATE TABLE "user"(id SERIAL,name text);
+
+4. inserting values into database:
+
+insert into "user" (name) values ('Raghul')
+insert into "user" (name) values ('Rohith')
+insert into "user" (name) values ('Sanjayini')
+insert into "user" (name) values ('Swathi')
+
+
+team_dynamics=# select * from "user";
+ id |   name    
+----+-----------
+  1 | Raghul
+  2 | Rohith
+  3 | Sanjayini
+  4 | Swathi
+
+5. creating a new table with user_food :
+
+create table user_food(food_id int,food_name varchar);
+
+6. inserting thee values into it:
+
+team_dynamics=# insert into user_food(food_id,food_name) values(001,'momos');
+
+team_dynamics=# insert into user_food(food_id,food_name) values(002,'Chicken biriyani');
+
+team_dynamics=# insert into user_food(food_id,food_name) values(003,'Parotta');
+
+team_dynamics=# insert into user_food(food_id,food_name) values(004,'Fried Rice');
+
+team_dynamics=# insert into user_food(food_id,food_name) values(005,'Puttu');
+
+CONSIDER WE WANTED TO EDIT THE TABLE AND UPDATE AS 101 INSTEAD OF 1
+
+update user_food set food_id=101 where food_name = 'momos';
+
+team_dynamics=# update user_food set food_id=102 where food_id = 2;
+
+team_dynamics=# update user_food set food_id=103 where food_id = 3;
+
+team_dynamics=# update user_food set food_id=104 where food_id = 4;
+
+team_dynamics=# update user_food set food_id=105 where food_id = 5;
+
+team_dynamics=# select * from user_food;
+ food_id |    food_name     
+---------+------------------
+     102 | Chicken biriyani
+     103 | Parotta
+     104 | Fried Rice
+     105 | Puttu
+     101 | momos
+
+
+suppose we wanted to order this list :
+
+select food_id from user_food order by food_id ASC;
+
+food_id 
+---------
+     101
+     102
+     103
+     104
+     105
+
+
+7. CREATING A NEW TABLE FAV FOOD AND ADDING VALUES TO IT:
+
+team_dynamics=# create table fav_food(id int,food_id int);
+CREATE TABLE
+                    ^
+team_dynamics=# insert into fav_food(id,food_id) values(1,101);
+
+team_dynamics=# insert into fav_food(id,food_id) values(2,104);
+
+team_dynamics=# insert into fav_food(id,food_id) values(3,105);
+
+team_dynamics=# insert into fav_food(id,food_id) values(4,103);
+
+team_dynamics=# select * from fav_food
+team_dynamics-# ;
+
+ id | food_id 
+----+---------
+  1 |     101
+  2 |     104
+  3 |     105
+  4 |     103
+(4 rows)
+
+
+
+CROSS JOIN IN THE TABLE
+
+team_dynamics=# select food_id,name from "user" CROSS JOIN fav_food;
+ food_id |   name    
+---------+-----------
+     101 | Raghul
+     101 | Rohith
+     101 | Sanjayini
+     101 | Swathi
+     104 | Raghul
+     104 | Rohith
+     104 | Sanjayini
+     104 | Swathi
+     105 | Raghul
+     105 | Rohith
+     105 | Sanjayini
+     105 | Swathi
+     103 | Raghul
+     103 | Rohith
+     103 | Sanjayini
+     103 | Swathi
+(16 rows)
+
+
+
+inner join:
+
+select food_id,name from "user" INNER JOIN fav_food on "user".id = fav_food.id
+
+food_id |   name    
+---------+-----------
+     101 | Raghul
+     104 | Rohith
+     105 | Sanjayini
+     103 | Swathi
+(4 rows)
+
